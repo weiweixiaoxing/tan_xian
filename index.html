@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>天地玄妙</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5dc; /* 米色背景 */
+            background-image: url('/static/Library:Desktop Pictures.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            width: 400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.68); /* 白色背景，68%透明度 */
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .star-info {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .star-info span {
+            color: #667eea;
+        }
+        
+        .star-info .star-value {
+            font-weight: 600;
+        }
+        
+        .query-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .form-control {
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+        }
+        
+        .query-btn {
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 10px;
+        }
+        
+        .query-btn:hover {
+            background: #3182ce;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+        }
+        
+        .results {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 12px;
+        }
+        
+        .results::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .results::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .results::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 3px;
+        }
+        
+        .results::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+        
+        .day-item {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .day-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .day-date {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 6px;
+        }
+        
+        .day-ganzhi {
+            font-size: 15px;
+            color: #4a5568;
+            margin-bottom: 4px;
+        }
+        
+        .day-zrx {
+            font-size: 15px;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+        
+        .day-lishi {
+            font-size: 15px;
+            color: #4a5568;
+            margin-bottom: 12px;
+        }
+        
+        .info-section {
+            margin-top: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .info-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        
+        .info-content {
+            font-size: 15px;
+            color: #4a5568;
+            margin-bottom: 4px;
+        }
+        
+        .no-results {
+            text-align: center;
+            color: #718096;
+            font-size: 16px;
+            padding: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>天地玄妙</h1>
+        
+        <div class="star-info">
+            <span>值日星 <span class="star-value" id="zrx">太阳</span></span>
+            <span>值时星 <span class="star-value" id="zsx">太阴</span></span>
+        </div>
+        
+        <div class="query-form">
+            <select class="form-control" id="query-year">
+                <option value="">请选择年份</option>
+                <!-- 生成2019年到2100年的每一年 -->
+                <option value="2019">年 2019</option>
+                <option value="2020">年 2020</option>
+                <option value="2021">年 2021</option>
+                <option value="2022">年 2022</option>
+                <option value="2023">年 2023</option>
+                <option value="2024">年 2024</option>
+                <option value="2025">年 2025</option>
+                <option value="2026" selected>年 2026</option>
+                <option value="2027">年 2027</option>
+                <option value="2028">年 2028</option>
+                <option value="2029">年 2029</option>
+                <option value="2030">年 2030</option>
+                <option value="2031">年 2031</option>
+                <option value="2032">年 2032</option>
+                <option value="2033">年 2033</option>
+                <option value="2034">年 2034</option>
+                <option value="2035">年 2035</option>
+                <option value="2036">年 2036</option>
+                <option value="2037">年 2037</option>
+                <option value="2038">年 2038</option>
+                <option value="2039">年 2039</option>
+                <option value="2040">年 2040</option>
+                <option value="2041">年 2041</option>
+                <option value="2042">年 2042</option>
+                <option value="2043">年 2043</option>
+                <option value="2044">年 2044</option>
+                <option value="2045">年 2045</option>
+                <option value="2046">年 2046</option>
+                <option value="2047">年 2047</option>
+                <option value="2048">年 2048</option>
+                <option value="2049">年 2049</option>
+                <option value="2050">年 2050</option>
+                <option value="2051">年 2051</option>
+                <option value="2052">年 2052</option>
+                <option value="2053">年 2053</option>
+                <option value="2054">年 2054</option>
+                <option value="2055">年 2055</option>
+                <option value="2056">年 2056</option>
+                <option value="2057">年 2057</option>
+                <option value="2058">年 2058</option>
+                <option value="2059">年 2059</option>
+                <option value="2060">年 2060</option>
+                <option value="2061">年 2061</option>
+                <option value="2062">年 2062</option>
+                <option value="2063">年 2063</option>
+                <option value="2064">年 2064</option>
+                <option value="2065">年 2065</option>
+                <option value="2066">年 2066</option>
+                <option value="2067">年 2067</option>
+                <option value="2068">年 2068</option>
+                <option value="2069">年 2069</option>
+                <option value="2070">年 2070</option>
+                <option value="2071">年 2071</option>
+                <option value="2072">年 2072</option>
+                <option value="2073">年 2073</option>
+                <option value="2074">年 2074</option>
+                <option value="2075">年 2075</option>
+                <option value="2076">年 2076</option>
+                <option value="2077">年 2077</option>
+                <option value="2078">年 2078</option>
+                <option value="2079">年 2079</option>
+                <option value="2080">年 2080</option>
+                <option value="2081">年 2081</option>
+                <option value="2082">年 2082</option>
+                <option value="2083">年 2083</option>
+                <option value="2084">年 2084</option>
+                <option value="2085">年 2085</option>
+                <option value="2086">年 2086</option>
+                <option value="2087">年 2087</option>
+                <option value="2088">年 2088</option>
+                <option value="2089">年 2089</option>
+                <option value="2090">年 2090</option>
+                <option value="2091">年 2091</option>
+                <option value="2092">年 2092</option>
+                <option value="2093">年 2093</option>
+                <option value="2094">年 2094</option>
+                <option value="2095">年 2095</option>
+                <option value="2096">年 2096</option>
+                <option value="2097">年 2097</option>
+                <option value="2098">年 2098</option>
+                <option value="2099">年 2099</option>
+                <option value="2100">年 2100</option>
+            </select>
+            
+            <select class="form-control" id="query-month">
+                <option value="1">月 1</option>
+                <option value="2">月 2</option>
+                <option value="3">月 3</option>
+                <option value="4">月 4</option>
+                <option value="5">月 5</option>
+                <option value="6">月 6</option>
+                <option value="7">月 7</option>
+                <option value="8">月 8</option>
+                <option value="9">月 9</option>
+                <option value="10">月 10</option>
+                <option value="11" selected>月 11</option>
+                <option value="12">月 12</option>
+            </select>
+            
+            <select class="form-control" id="query-zrx">
+                <option value="水星">值日水星</option>
+                <option value="太阴">值日太阴</option>
+                <option value="木星">值日木星</option>
+                <option value="计都">值日计都</option>
+                <option value="土星">值日土星</option>
+                <option value="罗睺">值日罗睺</option>
+                <option value="金星">值日金星</option>
+                <option value="太阳">值日太阳</option>
+                <option value="火星">值日火星</option>
+            </select>
+            
+            <button class="query-btn" id="query-btn">查询</button>
+        </div>
+        
+        <div class="results" id="results">
+            <!-- 结果将在这里动态生成 -->
+        </div>
+    </div>
+    
+    <script>
+        // 更新当前星数信息
+        async function updateStarInfo() {
+            try {
+                const response = await fetch('/api/data');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                
+                document.getElementById('zrx').textContent = data.zrx;
+                document.getElementById('zsx').textContent = data.zsx;
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            }
+        }
+        
+        // 处理查询
+        document.getElementById('query-btn').addEventListener('click', async () => {
+            const year = document.getElementById('query-year').value;
+            const month = document.getElementById('query-month').value;
+            const zrx = document.getElementById('query-zrx').value.replace('值日', '');
+            
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="no-results">查询中...</div>';
+            
+            try {
+                const response = await fetch(`/api/query?year=${year}&month=${month}&zrx_star=${encodeURIComponent(zrx)}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.count > 0) {
+                        let resultsHTML = '';
+                        
+                        data.results.forEach(day => {
+                            // 构建日期格式
+                            const date = new Date(year, month - 1, day.day);
+                            const formattedDate = `${year}年${day.month}月${day.day}日`;
+                            
+                            // 构建shaf信息
+                            let shafHTML = '<div class="info-section"><div class="info-title">都天信息</div>';
+                            if (day.shaf) {
+                                shafHTML += `<div class="info-content">戊都天${day.shaf.wudt}</div>`;
+                                shafHTML += `<div class="info-content">巳都天${day.shaf.jidt}</div>`;
+                                shafHTML += `<div class="info-content">都天夹煞${day.shaf.dtjs}</div>`;
+                            }
+                            shafHTML += '</div>';
+                            
+                            // 构建暗建煞信息
+                            let whajsHTML = '<div class="info-section"><div class="info-title">暗建煞</div>';
+                            if (day.whajs && Object.keys(day.whajs).length > 0) {
+                                // 获取当前月对应的暗建煞
+                                const currentMonthKey = {
+                                    1: 'yi', 2: 'er', 3: 'san', 4: 'si',
+                                    5: 'wu', 6: 'liu', 7: 'qi', 8: 'ba',
+                                    9: 'jiu', 10: 'shi', 11: 'shiyi', 12: 'shier'
+                                }[day.month];
+                                
+                                if (currentMonthKey && day.whajs[currentMonthKey]) {
+                                    whajsHTML += `<div class="info-content">${day.whajs[currentMonthKey]}</div>`;
+                                }
+                            }
+                            whajsHTML += '</div>';
+                            
+                            resultsHTML += `
+                                <div class="day-item">
+                                    <div class="day-date">${formattedDate}</div>
+                                    <div class="day-ganzhi">干支：${day.ganzhi}</div>
+                                    <div class="day-zrx">值日星：${day.zrx}</div>
+                                    <div class="day-lishi">${day.lishi}</div>
+                                    ${shafHTML}
+                                    ${whajsHTML}
+                                </div>
+                            `;
+                        });
+                        
+                        resultsDiv.innerHTML = resultsHTML;
+                    } else {
+                        resultsDiv.innerHTML = '<div class="no-results">未找到匹配的日子</div>';
+                    }
+                } else {
+                    resultsDiv.innerHTML = `<div class="no-results">查询失败：${data.error}</div>`;
+                }
+            } catch (error) {
+                console.error('查询出错:', error);
+                resultsDiv.innerHTML = '<div class="no-results">查询出错，请稍后重试</div>';
+            }
+        });
+        
+        // 页面加载时更新星数信息
+        window.onload = updateStarInfo;
+    </script>
+</body>
+</html>
