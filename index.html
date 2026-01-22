@@ -1,1049 +1,855 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>天地玄妙</title>
-    <!-- 引入lunar-javascript库 -->
-    <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.1/lunar.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: Arial, sans-serif;
-            background-image: url('https://img.51miz.com/preview/element/00/00/23/04/E-230486-2FC04154.jpg!middle');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #333;
-            line-height: 1.6;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-        
-        h1 {
-            text-align: center;
-            font-size: 24px;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        
-        .current-info {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .xing-info {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .xing-item {
-            text-align: center;
-        }
-        
-        .xing-label {
-            font-size: 12px;
-            color: #666;
-        }
-        
-        .xing-value {
-            font-size: 16px;
-            font-weight: bold;
-            color: #3498db;
-        }
-        
-        .input-section {
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-        
-        .input-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .input-group {
-            flex: 1;
-            min-width: 80px;
-        }
-        
-        .input-group label {
-            display: block;
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 5px;
-        }
-        
-        select, button {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            width: 100%;
-            font-size: 14px;
-        }
-        
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            margin-bottom: 0;
-        }
-        
-        button:hover {
-            background-color: #2980b9;
-        }
-        
-        .result-section {
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 15px;
-            border-radius: 10px;
-            max-height: 500px;
-            overflow-y: auto;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-        
-        .result-item {
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-        
-        .result-item h3 {
-            font-size: 16px;
-            color: #3498db;
-            margin-bottom: 10px;
-        }
-        
-        .result-content {
-            font-size: 14px;
-            line-height: 1.8;
-        }
-        
-        .result-line {
-            margin-bottom: 5px;
-        }
-        
-        /* 滚动条样式 */
-        ::-webkit-scrollbar {
-            width: 5px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: rgba(52, 152, 219, 0.5);
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(52, 152, 219, 0.8);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>农历值星计算工具</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft Yahei", sans-serif; }
+    body { max-width: 1200px; margin: 20px auto; padding: 0 20px; line-height: 1.6; }
+    .container { padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; }
+    .form-group { margin: 15px 0; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    input, select, button { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; width: 300px; }
+    button { 
+      width: 100%; 
+      background: #0078d7; 
+      color: white; 
+      border: none; 
+      cursor: pointer; 
+      font-size: 16px; 
+      margin-top: 20px;
+    }
+    button:hover { background: #005a9e; }
+    .result { 
+      margin-top: 30px; 
+      padding: 20px; 
+      background: white; 
+      border: 1px solid #eee; 
+      border-radius: 8px;
+      white-space: pre-wrap;
+      font-family: "Consolas", monospace;
+    }
+    .title { text-align: center; margin-bottom: 20px; color: #333; }
+    .tips { color: #666; font-size: 14px; margin-top: 5px; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>天地玄妙</h1>
-        
-        <div class="current-info">
-            <div class="xing-info">
-                <div class="xing-item">
-                    <div class="xing-label">值日星</div>
-                    <div class="xing-value" id="currentZrx">火星</div>
-                </div>
-                <div class="xing-item">
-                    <div class="xing-label">值时星</div>
-                    <div class="xing-value" id="currentZsx">罗睺</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="input-section">
-            <div class="input-row">
-                <div class="input-group">
-                    <select id="yearSelect">
-                        <!-- 年份选项将通过JavaScript动态生成 -->
-                    </select>
-                </div>
-                <div class="input-group">
-                    <select id="monthSelect">
-                        <!-- 月份选项将通过JavaScript动态生成 -->
-                    </select>
-                </div>
-                <div class="input-group">
-                    <select id="starSelect">
-                        <!-- 值星选项将通过JavaScript动态生成 -->
-                    </select>
-                </div>
-                <div class="input-group">
-                    <button id="queryBtn">查询</button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="result-section">
-            <div id="result"></div>
-        </div>
-        
-        <!-- 调试日志区域（仅开发环境可见） -->
-        <div id="debug-log" style="display: none; background: #f5f5f5; padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 12px; max-height: 200px; overflow-y: auto;">
-            <h4 style="margin: 0 0 5px 0; color: #666;">调试日志：</h4>
-            <div id="log-content"></div>
-        </div>
+  <div class="container">
+    <h1 class="title">农历值星计算工具</h1>
+    
+    <!-- 输入表单 -->
+    <div class="form-group">
+      <label for="nian">年份（可选，默认当前年）</label>
+      <input type="number" id="nian" placeholder="例如：2026" min="1900" max="2100">
+      <div class="tips">留空则使用当前系统时间的农历年</div>
     </div>
     
-    <script>
-        // 添加日志记录功能
-        function logMessage(message, level = 'info') {
-            const logContent = document.getElementById('log-content');
-            if (logContent) {
-                const timestamp = new Date().toLocaleTimeString();
-                const logItem = document.createElement('div');
-                logItem.style.marginBottom = '2px';
-                logItem.style.color = level === 'error' ? '#e74c3c' : level === 'warn' ? '#f39c12' : '#2c3e50';
-                logItem.textContent = `[${timestamp}] ${level}: ${message}`;
-                logContent.appendChild(logItem);
-                logContent.scrollTop = logContent.scrollHeight;
-            }
-            console.log(`[${level}] ${message}`);
+    <div class="form-group">
+      <label for="yue">月份（可选，默认当前月）</label>
+      <input type="number" id="yue" placeholder="例如：12" min="1" max="12">
+      <div class="tips">留空则使用当前系统时间的农历月</div>
+    </div>
+    
+    <div class="form-group">
+      <label for="czrx">值日星（必填）</label>
+      <select id="czrx">
+        <option value="水星">水星</option>
+        <option value="太阴">太阴</option>
+        <option value="木星">木星</option>
+        <option value="计都">计都</option>
+        <option value="土星">土星</option>
+        <option value="罗睺">罗睺</option>
+        <option value="金星">金星</option>
+        <option value="太阳">太阳</option>
+        <option value="火星">火星</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label for="czsx">值时星（必填）</label>
+      <select id="czsx">
+        <option value="水星">水星</option>
+        <option value="太阴">太阴</option>
+        <option value="木星">木星</option>
+        <option value="计都">计都</option>
+        <option value="土星">土星</option>
+        <option value="罗睺">罗睺</option>
+        <option value="金星">金星</option>
+        <option value="太阳">太阳</option>
+        <option value="火星">火星</option>
+      </select>
+    </div>
+    
+    <button id="calculateBtn">开始计算</button>
+    
+    <!-- 结果展示 -->
+    <div class="result" id="result"></div>
+  </div>
+
+  <!-- 引入依赖库（CDN） -->
+  <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.0/dist/lunar.min.js"></script>
+  
+  <script>
+    // ========== 1. 核心常量（和原代码一致） ==========
+    const XINGSHU_MAP = {
+      '水星': 1, '太阴': 2, '木星': 3, '计都': 4, 
+      '土星': 5, '罗睺': 6, '金星': 7, '太阳': 8, '火星': 9
+    };
+    const XINGSHU_REVERSE = {
+      1: '水星', 2: '太阴', 3: '木星', 4: '计都', 
+      5: '土星', 6: '罗睺', 7: '金星', 8: '太阳', 9: '火星'
+    };
+
+    const diZhiIndex = { 子: 0, 丑: 1, 寅: 2, 卯: 3, 辰: 4, 巳: 5, 午: 6, 未: 7, 申: 8, 酉: 9, 戌: 10, 亥: 11 };
+    const tianGanOrder = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+    const keGanzhiMap = {
+      '甲己': ['甲子', '乙丑', '丙寅', '丁卯', '戊辰', '己巳', '庚午', '辛未', '壬申', '癸酉', '甲戌', '乙亥'],
+      '乙庚': ['丙子', '丁丑', '戊寅', '己卯', '庚辰', '辛巳', '壬午', '癸未', '甲申', '乙酉', '丙戌', '丁亥'],
+      '丙辛': ['戊子', '己丑', '庚寅', '辛卯', '壬辰', '癸巳', '甲午', '乙未', '丙申', '丁酉', '戊戌', '己亥'],
+      '丁壬': ['庚子', '辛丑', '壬寅', '癸卯', '甲辰', '乙巳', '丙午', '丁未', '戊申', '己酉', '庚戌', '辛亥'],
+      '戊癸': ['壬子', '癸丑', '甲寅', '乙卯', '丙辰', '丁巳', '戊午', '己未', '庚申', '辛酉', '壬戌', '癸亥']
+    };
+
+    const TAIJI_GR = {
+      '甲': ['子','午'], '乙': ['子','午'], '丙': ['卯','酉'], '丁': ['卯','酉'],
+      '戊': ['辰','戌','丑','未'], '己': ['辰','戌','丑','未'], '庚': ['寅','亥'], '辛': ['寅','亥'], '壬': ['巳','申'], '癸': ['巳','申']
+    };
+    const TIANYI_GR = {
+      '甲': ['丑','未'], '戊': ['丑','未'], '庚': ['丑','未'], '乙': ['子','申'], '己': ['子','申'],
+      '丙': ['亥','酉'], '丁': ['亥','酉'], '壬': ['卯','巳'], '癸': ['卯','巳'], '辛': ['寅','午']
+    };
+    const GUOYIN_GR = {
+      '甲': ['戌'], '乙': ['亥'], '丙': ['丑'], '丁': ['寅'], '戊': ['丑'], '己': ['寅'],
+      '庚': ['辰'], '辛': ['巳'], '壬': ['未'], '癸': ['申']
+    };
+    const WENCHANG_GR = {
+      '甲': ['巳'], '乙': ['午'], '丙': ['申'], '丁': ['酉'], '戊': ['申'], '己': ['酉'],
+      '庚': ['亥'], '辛': ['子'], '壬': ['寅'], '癸': ['卯']
+    };
+    const FUXING_GR = {
+      '甲': ['寅','子'], '丙': ['寅','子'], '乙': ['丑','卯'], '癸': ['丑','卯'],
+      '戊': ['申'], '己': ['未'], '丁': ['亥'], '庚': ['午'], '辛': ['巳'], '壬': ['辰']
+    };
+    const TIANCHU_GR = {
+      '甲': ['巳'], '丙': ['巳'], '乙': ['午'], '丁': ['午'], '戊': ['申'],
+      '己': ['酉'], '庚': ['亥'], '辛': ['子'], '壬': ['寅'], '癸': ['卯']
+    };
+    const WENQU_GR = {
+      '甲': ['巳'], '乙': ['午'], '丙': ['申'], '戊': ['申'], '丁': ['酉'], '己': ['酉'],
+      '庚': ['亥'], '辛': ['子'], '壬': ['寅'], '癸': ['卯']
+    };
+    const JIEDU_GR = {
+      '甲': ['巳'], '丙': ['巳'], '戊': ['巳'], '乙': ['未'], '丁': ['未'], '己': ['未'],
+      '庚': ['亥'], '壬': ['亥'], '辛': ['丑'], '癸': ['丑']
+    };
+
+    const TAIJI_GR_CACHE = new Map(Object.entries(TAIJI_GR));
+    const TIANYI_GR_CACHE = new Map(Object.entries(TIANYI_GR));
+    const GUOYIN_GR_CACHE = new Map(Object.entries(GUOYIN_GR));
+    const WENCHANG_GR_CACHE = new Map(Object.entries(WENCHANG_GR));
+    const FUXING_GR_CACHE = new Map(Object.entries(FUXING_GR));
+    const TIANCHU_GR_CACHE = new Map(Object.entries(TIANCHU_GR));
+    const WENQU_GR_CACHE = new Map(Object.entries(WENQU_GR));
+    const JIEDU_GR_CACHE = new Map(Object.entries(JIEDU_GR));
+
+    const DTJS_MAP = {
+      '甲己': ['辰', '巳', '巽'], '乙庚': ['子寅', '丑卯', '甲'],
+      '丙辛': ['戌', '亥', '乾'], '丁壬': ['申', '酉', '庚'], '戊癸': ['午', '未', '丁']
+    };
+
+    const GAN_YIN_YANG = {
+      甲: '阳', 己: '阳', 丁: '阳', 壬: '阳', 戊: '阳', 癸: '阳',
+      乙: '阴', 庚: '阴', 丙: '阴', 辛: '阴'
+    };
+
+    const XINGZHI = {
+      '子': 1, '未': 2, '申': 2, '卯': 3, '辰': 4, '巳': 4,
+      '戌': 6, '亥': 6, '酉': 7, '丑': 8, '寅': 8, '午': 9
+    };
+
+    const DZSX = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+    const DZNX = ['子', '亥', '戌', '酉', '申', '未', '午', '巳', '辰', '卯', '寅', '丑'];
+    const PAISHANZ = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const QIXING = {
+      '甲': [1,2,3,4,5,6,7,8,9], '己': [1,2,3,4,5,6,7,8,9],
+      '乙': [7,6,5,4,3,2,1,9,8], '庚': [7,6,5,4,3,2,1,9,8],
+      '丙': [3,2,1,9,8,7,6,5,4], '辛': [3,2,1,9,8,7,6,5,4],
+      '丁': [9,1,2,3,4,5,6,7,8], '壬': [9,1,2,3,4,5,6,7,8],
+      '戊': [5,6,7,8,9,1,2,3,4], '癸': [5,6,7,8,9,1,2,3,4]
+    };
+
+    const DZ12 = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+    const MONTH_KEYS = ['yi','er','san','si','wu','liu','qi','ba','jiu','shi','shiyi','shier'];
+
+    const JG = { 1: '坎', 2: '坤', 3: '震', 4: '巽', 5: '中', 6: '乾', 7: '兑', 8: '艮', 9: '离' };
+    const JG_REVERSE = Object.entries(JG).reduce((res, [num, name]) => {
+      res[name] = Number(num);
+      return res;
+    }, {});
+    const JIUXING_BASE = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const JX = ['土', '金', '气', '罗', '孛', '日', '月', '计', '木'];
+    const SN = {
+      '冬至': { dir: '顺', num: 1 },
+      '立春': { dir: '顺', num: 8 },
+      '春分': { dir: '顺', num: 3 },
+      '立夏': { dir: '顺', num: 4 },
+      '夏至': { dir: '逆', num: 9 },
+      '立秋': { dir: '逆', num: 2 },
+      '秋分': { dir: '逆', num: 7 },
+      '立冬': { dir: '逆', num: 6 }
+    };
+    const SNBC = {
+      '冬至': ['冬至', '小寒', '大寒'],
+      '立春': ['立春', '雨水', '惊蛰'],
+      '春分': ['春分', '清明', '谷雨'],
+      '立夏': ['立夏', '小满', '芒种'],
+      '夏至': ['夏至', '小暑', '大暑'],
+      '立秋': ['立秋', '处暑', '白露'],
+      '秋分': ['秋分', '寒露', '霜降'],
+      '立冬': ['立冬', '小雪', '大雪']
+    };
+    const LIU_SHI_JIA_ZI = [
+      "甲子", "乙丑", "丙寅", "丁卯", "戊辰", "己巳", "庚午", "辛未", "壬申", "癸酉",
+      "甲戌", "乙亥", "丙子", "丁丑", "戊寅", "己卯", "庚辰", "辛巳", "壬午", "癸未",
+      "甲申", "乙酉", "丙戌", "丁亥", "戊子", "己丑", "庚寅", "辛卯", "壬辰", "癸巳",
+      "甲午", "乙未", "丙申", "丁酉", "戊戌", "己亥", "庚子", "辛丑", "壬寅", "癸卯",
+      "甲辰", "乙巳", "丙午", "丁未", "戊申", "己酉", "庚戌", "辛亥", "壬子", "癸丑",
+      "甲寅", "乙卯", "丙辰", "丁巳", "戊午", "己未", "庚申", "辛酉", "壬戌", "癸亥"
+    ];
+    const LSHIB = {
+      '子': '艮', '丑': '艮', '寅': '巽', '卯': '巽', '辰': '巽',
+      '巳': '坤', '午': '坤', '未': '坤', '申': '乾', '酉': '乾', '戌': '乾', '亥': '艮'
+    };
+
+    const ANJIAN1 = {
+      '子午卯酉': ['坤','震','巽','中','乾','兑','艮','离','坎','坤','震','巽'],
+      '寅申巳亥': ['艮','离','坎','坤','震','巽','中','乾','兑','艮','离','坎'],
+      '辰戌丑未': ['中','乾','兑','艮','离','坎','坤','震','巽','中','乾','兑']
+    };
+
+    // ========== 2. 工具函数（适配浏览器环境） ==========
+    const getValidNumber = (value) => {
+      if (typeof value !== 'number' || isNaN(value) || !Number.isInteger(value) || value <= 0) return null;
+      return value;
+    };
+
+    const normalizePosition = (pos) => {
+      if (!pos || typeof pos !== 'string') return null;
+      const purePos = pos.replace(/方|方位/g, '').trim();
+      return purePos ? purePos : null;
+    };
+
+    const normalizeZhixing = (zhixing) => {
+      if (!zhixing || typeof zhixing !== 'string') return null;
+      return `${zhixing}日（值星）`;
+    };
+
+    const getYearZhiFromNz = (nz) => {
+      if (!nz || typeof nz !== 'string' || nz.length < 2) return null;
+      const zhi = nz[1];
+      return DZ12.includes(zhi) ? zhi : null;
+    };
+
+    const calculateLishi = (nz) => {
+      const zhi = getYearZhiFromNz(nz);
+      if (!zhi || !LSHIB[zhi]) return null;
+      const fang = LSHIB[zhi];
+      return `${zhi}年力士在${fang}方`;
+    };
+
+    const calculateWhajs = (nz) => {
+      const zhi = getYearZhiFromNz(nz);
+      if (!zhi) return null;
+      const group = ['子','午','卯','酉'].includes(zhi) ? '子午卯酉' : ['寅','申','巳','亥'].includes(zhi) ? '寅申巳亥' : ['辰','戌','丑','未'].includes(zhi) ? '辰戌丑未' : null;
+      if (!group || !ANJIAN1[group] || ANJIAN1[group].length !== 12) return null;
+      const seq = ANJIAN1[group];
+      const monthNames = ['一','二','三','四','五','六','七','八','九','十','十一','十二'];
+      const out = {};
+      for (let i = 0; i < 12; i++) {
+        const key = MONTH_KEYS[i];
+        out[key] = `${monthNames[i]}月暗建煞在${seq[i]}`;
+      }
+      return out;
+    };
+
+    const calculateGanGroup = (ganZhi) => {
+      const gan = ganZhi?.[0];
+      if (!gan || !QIXING[gan]) return null;
+      const seq = QIXING[gan];
+      return DZ12.reduce((result, zhi, i) => {
+        const num = seq[i % 9];
+        (result[num] = result[num] ?? []).push(zhi);
+        return result;
+      }, {});
+    };
+
+    const calculateXingshi = (rz) => calculateGanGroup(rz);
+    const calculateXingke = (sz) => calculateGanGroup(sz);
+
+    const getJieQi = (target) => {
+      const getVal = (obj) => obj?.getName?.() ?? obj?.name ?? (typeof obj === 'string' ? obj.trim() : null);
+      const current = getVal(target?.getCurrentJieQi?.() ?? target?.getCurrentJie?.() ?? target?.getCurrentQi?.());
+      if (current) return current;
+      const dayJq = getVal(target?.getJieQi?.() ?? target?.getJie?.() ?? target?.getQi?.());
+      if (dayJq) return dayJq;
+      const prev = getVal(target?.getPrevJieQi?.() ?? target?.getPrevJie?.() ?? target?.getPrevQi?.());
+      if (prev) return prev;
+      const next = getVal(target?.getNextJieQi?.() ?? target?.getNextJie?.() ?? target?.getNextQi?.());
+      return next;
+    };
+
+    const getYearGanZhiSafe = (lunar) => {
+      const direct = lunar?.getYearInGanZhi?.();
+      if (typeof direct === 'string' && direct.trim()) return direct;
+      const gan = lunar?.getYearGan?.();
+      const zhi = lunar?.getYearZhi?.();
+      return gan && zhi ? `${gan}${zhi}` : null;
+    };
+
+    const getMonthGanZhiSafe = (lunar) => {
+      const direct = lunar?.getMonthInGanZhi?.();
+      if (typeof direct === 'string' && direct.trim()) return direct;
+      const gan = lunar?.getMonthGan?.();
+      const zhi = lunar?.getMonthZhi?.();
+      return gan && zhi ? `${gan}${zhi}` : null;
+    };
+
+    const calculateCyxing = (m, d) => !m || !d || !['阳','阴'].includes(m) ? null : XINGZHI[(m==='阳'?DZSX:DZNX)[(d-1)%12]] ?? null;
+
+    const calculateXingri = (cyxing, chuyigzyy, yts) => {
+      if (cyxing === null || !chuyigzyy || !yts || !['阳','阴'].includes(chuyigzyy) || !PAISHANZ.includes(cyxing)) return null;
+      const idx = PAISHANZ.indexOf(cyxing);
+      const rearranged = chuyigzyy === '阳' ? [...PAISHANZ.slice(idx), ...PAISHANZ.slice(0, idx)] : (() => {
+        const reversed = [...PAISHANZ].reverse();
+        const revIdx = reversed.indexOf(cyxing);
+        return [...reversed.slice(revIdx), ...reversed.slice(0, revIdx)];
+      })();
+      return Object.fromEntries(
+        rearranged.map((num, idx) => [
+          num,
+          Array.from({ length: Math.ceil(yts / 9) }, (_, i) => idx + 1 + i * 9).filter(day => day <= yts)
+        ])
+      );
+    };
+
+    const findLastMaoDay = (startLunar) => {
+      const startSolar = startLunar.getSolar();
+      for (let i = 1; i <= 60; i++) {
+        const prevLunar = startSolar.next(-i).getLunar();
+        if (prevLunar.getDayZhi() === '卯') return prevLunar;
+      }
+      throw new Error('未找到卯日');
+    };
+
+    const calculateGuirenByMap = (nz, nowLunar, cache) => {
+      if (!nz || typeof nz !== 'string' || nz.length < 1) return null;
+      const gan = nz[0];
+      const grZhiList = cache.get(gan);
+      if (!grZhiList?.length) return null;
+      const year = nowLunar.getYear?.();
+      const month = nowLunar.getMonth?.();
+      const isLeap = typeof nowLunar.isLeap === 'function' ? nowLunar.isLeap() : false;
+      if (!year || !month || month < -12 || month > 12) return null;
+      const absMonth = Math.abs(month);
+      const lunarYear = lunar.LunarYear.fromYear(year);
+      const lunarMonth = lunarYear.getMonth(absMonth);
+      const days = lunarMonth?.getDayCount?.() ?? 0;
+      if (days <= 0) return null;
+      const firstDay = lunar.Lunar.fromYmd(year, absMonth, 1, isLeap);
+      const firstDayGz = firstDay.getDayInGanZhi?.() ?? '';
+      if (!firstDayGz || !LIU_SHI_JIA_ZI.includes(firstDayGz)) return null;
+      const firstIdx = LIU_SHI_JIA_ZI.indexOf(firstDayGz);
+      const result = [];
+      for (let d = 1; d <= days; d++) {
+        const idx = (firstIdx + d - 1) % 60;
+        const gz = LIU_SHI_JIA_ZI[idx];
+        const zhi = gz[1];
+        if (grZhiList.includes(zhi)) result.push({ day: d, gz });
+      }
+      return result.length ? result : null;
+    };
+
+    const calculateAllGuiren = (nz, nowLunar) => {
+      if (!nz || typeof nz !== 'string' || nz.length < 1) return null;
+      const gan = nz[0];
+      const year = nowLunar.getYear?.();
+      const month = nowLunar.getMonth?.();
+      const isLeap = typeof nowLunar.isLeap === 'function' ? nowLunar.isLeap() : false;
+      if (!year || !month || month < -12 || month > 12) return null;
+      const absMonth = Math.abs(month);
+      const lunarYear = lunar.LunarYear.fromYear(year);
+      const lunarMonth = lunarYear.getMonth(absMonth);
+      const days = lunarMonth?.getDayCount?.() ?? 0;
+      if (days <= 0) return null;
+      const firstDay = lunar.Lunar.fromYmd(year, absMonth, 1, isLeap);
+      const firstDayGz = firstDay.getDayInGanZhi?.() ?? '';
+      if (!firstDayGz || !LIU_SHI_JIA_ZI.includes(firstDayGz)) return null;
+      const firstIdx = LIU_SHI_JIA_ZI.indexOf(firstDayGz);
+      const monthDaysGz = {};
+      for (let d = 1; d <= days; d++) {
+        const idx = (firstIdx + d - 1) % 60;
+        const gz = LIU_SHI_JIA_ZI[idx];
+        monthDaysGz[d] = { gz, zhi: gz[1] };
+      }
+      const guirenConfigs = [
+        { key: 'taijiguiren', cache: TAIJI_GR_CACHE },
+        { key: 'tianyiguiren', cache: TIANYI_GR_CACHE },
+        { key: 'guoyinguiren', cache: GUOYIN_GR_CACHE },
+        { key: 'wenchangguiren', cache: WENCHANG_GR_CACHE },
+        { key: 'fuxingguiren', cache: FUXING_GR_CACHE },
+        { key: 'tianchuguiren', cache: TIANCHU_GR_CACHE },
+        { key: 'wenquguiren', cache: WENQU_GR_CACHE },
+        { key: 'jieduguiren', cache: JIEDU_GR_CACHE },
+      ];
+      const result = {};
+      let hasAny = false;
+      for (const cfg of guirenConfigs) {
+        const grZhiList = cfg.cache.get(gan);
+        if (!grZhiList?.length) {
+          result[cfg.key] = null;
+          continue;
         }
-        
-        // 重写console方法，将日志同时记录到页面
-        const originalConsole = {
-            log: console.log,
-            error: console.error,
-            warn: console.warn,
-            info: console.info
-        };
-        
-        console.log = function(...args) {
-            logMessage(args.join(' '), 'info');
-            originalConsole.log.apply(console, args);
-        };
-        
-        console.error = function(...args) {
-            logMessage(args.join(' '), 'error');
-            originalConsole.error.apply(console, args);
-        };
-        
-        console.warn = function(...args) {
-            logMessage(args.join(' '), 'warn');
-            originalConsole.warn.apply(console, args);
-        };
-        
-        console.info = function(...args) {
-            logMessage(args.join(' '), 'info');
-            originalConsole.info.apply(console, args);
-        };
-        
-        // 修复lunar-javascript库的全局对象引用
-        let Solar, Lunar;
-        // 等待文档加载完成后初始化
-        window.addEventListener('DOMContentLoaded', function() {
-            logMessage('DOM加载完成，开始初始化lunar-javascript库');
-            
-            // 确保lunar-javascript库正确加载
-            let libraryLoaded = false;
-            
-            // 尝试多种库初始化方式，确保兼容不同版本和环境
-            if (typeof window.lunar !== 'undefined') {
-                logMessage('检测到window.lunar对象');
-                
-                if (typeof window.lunar.Solar !== 'undefined' && typeof window.lunar.Lunar !== 'undefined') {
-                    logMessage('使用Solar和Lunar作为window.lunar的属性');
-                    Solar = window.lunar.Solar;
-                    Lunar = window.lunar.Lunar;
-                    libraryLoaded = true;
-                } else if (typeof window.lunar.fromYmd !== 'undefined') {
-                    logMessage('使用旧版本库结构，Lunar直接作为window.lunar');
-                    Lunar = window.lunar;
-                    Solar = window.solar || window.Solar || function() {};
-                    libraryLoaded = true;
-                } else if (typeof window.lunar.default !== 'undefined') {
-                    logMessage('使用ES模块版本的库结构');
-                    Solar = window.lunar.default.Solar;
-                    Lunar = window.lunar.default.Lunar;
-                    libraryLoaded = true;
-                } else {
-                    logMessage('无法识别的lunar对象结构: ' + JSON.stringify(Object.keys(window.lunar).slice(0, 5)), 'error');
-                }
-            } 
-            
-            if (!libraryLoaded && typeof window.Solar !== 'undefined' && typeof window.Lunar !== 'undefined') {
-                logMessage('直接使用全局Solar和Lunar对象');
-                Solar = window.Solar;
-                Lunar = window.Lunar;
-                libraryLoaded = true;
-            }
-            
-            if (!libraryLoaded) {
-                logMessage('lunar-javascript库未正确加载，尝试使用备选方案', 'error');
-                
-                // 尝试直接使用库的CDN URL，不依赖全局对象
-                try {
-                    const script = document.createElement('script');
-                    script.src = 'https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.1/lunar.min.js';
-                    script.onload = function() {
-                        logMessage('重新加载lunar-javascript库成功');
-                        // 重新初始化
-                        if (typeof window.lunar !== 'undefined') {
-                            Solar = window.lunar.Solar;
-                            Lunar = window.lunar.Lunar;
-                            // 重新初始化页面
-                            initSelects();
-                            updateCurrentStars();
-                            handleQuery();
-                        }
-                    };
-                    script.onerror = function() {
-                        logMessage('重新加载lunar-javascript库失败', 'error');
-                    };
-                    document.head.appendChild(script);
-                } catch (e) {
-                    logMessage('重新加载库时出错: ' + e.message, 'error');
-                }
-                
-                document.getElementById('result').innerHTML = '<div style="color: red; text-align: center; padding: 20px;">lunar-javascript库加载失败，请检查网络连接</div>';
-                return;
-            }
-            
-            logMessage('lunar-javascript库初始化成功');
-            logMessage('Solar类型: ' + typeof Solar);
-            logMessage('Lunar类型: ' + typeof Lunar);
-        
-        // 星数映射
-        const xingshu = {
-            1: '水星', 2: '太阴', 3: '木星', 4: '计都', 5: '土星',
-            6: '罗睺', 7: '金星', 8: '太阳', 9: '火星'
-        };
-        
-        // 星数反向映射
-        const xingshuReverse = {
-            '水星': 1, '太阴': 2, '木星': 3, '计都': 4, '土星': 5,
-            '罗睺': 6, '金星': 7, '太阳': 8, '火星': 9
-        };
-        
-        // 初始化年、月、值星下拉框
-        function initSelects() {
-            const yearSelect = document.getElementById('yearSelect');
-            const monthSelect = document.getElementById('monthSelect');
-            const starSelect = document.getElementById('starSelect');
-            
-            // 当前年份
-            const currentYear = new Date().getFullYear();
-            
-            // 添加年份选项（当前年份前后5年）
-            // 选项格式：年YYYY
-            for (let year = currentYear - 5; year <= currentYear + 5; year++) {
-                const option = document.createElement('option');
-                option.value = year;
-                option.textContent = `年${year}`;
-                if (year === currentYear) {
-                    option.selected = true;
-                }
-                yearSelect.appendChild(option);
-            }
-            
-            // 添加月份选项
-            // 选项格式：月MM
-            for (let month = 1; month <= 12; month++) {
-                const option = document.createElement('option');
-                option.value = month;
-                option.textContent = `月${month}`;
-                if (month === new Date().getMonth() + 1) {
-                    option.selected = true;
-                }
-                monthSelect.appendChild(option);
-            }
-            
-            // 清空并重新添加值星选项
-            starSelect.innerHTML = '';
-            // 选项格式：值日XX
-            const starOptions = ['水星', '太阴', '木星', '计都', '土星', '罗睺', '金星', '太阳', '火星'];
-            for (const star of starOptions) {
-                const option = document.createElement('option');
-                option.value = star;
-                option.textContent = `值日${star}`;
-                if (star === '水星') {
-                    option.selected = true;
-                }
-                starSelect.appendChild(option);
-            }
+        const list = Object.entries(monthDaysGz).filter(([, v]) => grZhiList.includes(v.zhi)).map(([day, v]) => ({ day: Number(day), gz: v.gz }));
+        result[cfg.key] = list.length ? list : null;
+        if (list.length) hasAny = true;
+      }
+      return hasAny ? result : null;
+    };
+
+    const getCorrectedTime = (date) => {
+      const longitude = 109.2;
+      const timeDiffMinutes = (longitude - 120) * 4;
+      return new Date(date.getTime() + timeDiffMinutes * 60 * 1000);
+    };
+
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    };
+
+    const getDtjsGroupByGan = (gan) => {
+      if (!gan) return null;
+      if (['甲','己'].includes(gan)) return DTJS_MAP['甲己'];
+      if (['乙','庚'].includes(gan)) return DTJS_MAP['乙庚'];
+      if (['丙','辛'].includes(gan)) return DTJS_MAP['丙辛'];
+      if (['丁','壬'].includes(gan)) return DTJS_MAP['丁壬'];
+      if (['戊','癸'].includes(gan)) return DTJS_MAP['戊癸'];
+      return null;
+    };
+
+    const calculateKeGanZhi = (nowLunar, now) => {
+      try {
+        const shiGanZhi = nowLunar.getTimeInGanZhi?.() ?? null;
+        if (!shiGanZhi) return { kz: null, kezhi: null, kg: null };
+        const correctedTime = getCorrectedTime(now);
+        const shiGan = shiGanZhi[0];
+        const h = correctedTime.getHours();
+        const m = correctedTime.getMinutes();
+        const totalMinutes = h * 60 + m;
+        const timePeriods = [
+          { name: '子时', start: 23 * 60, end: 1 * 60 },
+          { name: '丑时', start: 1 * 60, end: 3 * 60 },
+          { name: '寅时', start: 3 * 60, end: 5 * 60 },
+          { name: '卯时', start: 5 * 60, end: 7 * 60 },
+          { name: '辰时', start: 7 * 60, end: 9 * 60 },
+          { name: '巳时', start: 9 * 60, end: 11 * 60 },
+          { name: '午时', start: 11 * 60, end: 13 * 60 },
+          { name: '未时', start: 13 * 60, end: 15 * 60 },
+          { name: '申时', start: 15 * 60, end: 17 * 60 },
+          { name: '酉时', start: 17 * 60, end: 19 * 60 },
+          { name: '戌时', start: 19 * 60, end: 21 * 60 },
+          { name: '亥时', start: 21 * 60, end: 23 * 60 }
+        ];
+        let minutesInPeriod = 0;
+        let found = false;
+        for (const p of timePeriods) {
+          if ((p.start <= p.end && totalMinutes >= p.start && totalMinutes < p.end) || (p.start > p.end && (totalMinutes >= p.start || totalMinutes < p.end))) {
+            minutesInPeriod = (totalMinutes - p.start + 24 * 60) % (24 * 60);
+            found = true;
+            break;
+          }
         }
-        
-        // 查找目标日期之前最近的地支为卯的日期
-        function getMaodayBeforeDate(targetLunar) {
-            try {
-                // 转换为公历日期
-                const solar = targetLunar.getSolar();
-                const targetSolarDate = new Date(solar.getYear(), solar.getMonth() - 1, solar.getDay());
-                
-                // 往前查找最多12天（一个地支周期）
-                for (let daysBefore = 1; daysBefore <= 12; daysBefore++) {
-                    try {
-                        // 计算目标日期之前的日期
-                        const prevSolarDate = new Date(targetSolarDate);
-                        prevSolarDate.setDate(targetSolarDate.getDate() - daysBefore);
-                        
-                        // 创建公历对象并转换为农历
-                        const prevSolar = Solar.fromYmd(
-                            prevSolarDate.getFullYear(), prevSolarDate.getMonth() + 1, prevSolarDate.getDate()
-                        );
-                        const prevLunar = prevSolar.getLunar();
-                        
-                        // 获取该日期的干支并检查地支是否为卯
-                        const dayGanzhi = prevLunar.getDayInGanZhi();
-                        if (dayGanzhi.length >= 2 && dayGanzhi.charAt(1) === '卯') {
-                            return prevLunar;
-                        }
-                    } catch (e) {
-                        console.log(`检查第${daysBefore}天出错: ${e}，继续查找...`);
-                        continue;
-                    }
-                }
-            } catch (e) {
-                console.log(`查找卯日时出错: ${e}`);
-            }
+        if (!found) throw new Error('未找到对应时辰');
+        let effectiveGan = shiGan;
+        if (minutesInPeriod >= 115) {
+          const idx = tianGanOrder.indexOf(effectiveGan);
+          effectiveGan = tianGanOrder[(idx + 1 + tianGanOrder.length) % tianGanOrder.length];
+        }
+        const kePeriods = [
+          { name: '子', start: 115, end: 5 },
+          { name: '丑', start: 5, end: 15 },
+          { name: '寅', start: 15, end: 25 },
+          { name: '卯', start: 25, end: 35 },
+          { name: '辰', start: 35, end: 45 },
+          { name: '巳', start: 45, end: 55 },
+          { name: '午', start: 55, end: 65 },
+          { name: '未', start: 65, end: 75 },
+          { name: '申', start: 75, end: 85 },
+          { name: '酉', start: 85, end: 95 },
+          { name: '戌', start: 95, end: 105 },
+          { name: '亥', start: 105, end: 115 }
+        ];
+        const adj = minutesInPeriod % 120;
+        let keZhi = null;
+        for (const k of kePeriods) {
+          if ((k.start <= k.end && adj >= k.start && adj < k.end) || (k.start > k.end && (adj >= k.start || adj < k.end))) {
+            keZhi = k.name;
+            break;
+          }
+        }
+        if (!keZhi) throw new Error('未找到对应刻地支');
+        let ganKey;
+        switch (effectiveGan) {
+          case '甲': case '己': ganKey = '甲己'; break;
+          case '乙': case '庚': ganKey = '乙庚'; break;
+          case '丙': case '辛': ganKey = '丙辛'; break;
+          case '丁': case '壬': ganKey = '丁壬'; break;
+          case '戊': case '癸': ganKey = '戊癸'; break;
+          default: throw new Error('无效天干');
+        }
+        const idx = diZhiIndex[keZhi];
+        const keGanZhi = keGanzhiMap[ganKey]?.[idx];
+        if (!keGanZhi) throw new Error('刻干支映射失败');
+        return { kz: keGanZhi, kezhi: keGanZhi[1] ?? null, kg: keGanZhi[0] ?? null };
+      } catch (e) {
+        return { kz: null, kezhi: null, kg: null };
+      }
+    };
+
+    const processChaxun = (
+      cn, 
+      cy, 
+      czrx, 
+      czsx,
+      xingri,
+      whajs,
+      shaf,
+      currentLunarYear,
+      monthValue,
+      isLeapMonth
+    ) => {
+      const czrxNum = XINGSHU_MAP[czrx] || null;
+      const czsxNum = XINGSHU_MAP[czsx] || null;
+      
+      let cxingzhiri = null;
+      const cxingzhiriDetail = {};
+      
+      if (czrxNum && xingri && xingri[czrxNum]) {
+        const days = xingri[czrxNum];
+        const dayStrList = [];
+        for (const day of days) {
+          if (isNaN(day) || day < 1) continue;
+          try {
+            const lunarDate = lunar.Lunar.fromYmd(currentLunarYear, monthValue, day, isLeapMonth);
+            const dayGanZhi = lunarDate.getDayInGanZhi();
+            const dayXingshi = calculateXingshi(dayGanZhi);
+            const jieqi = getJieQi(lunarDate);
             
-            return null;
-        }
-        
-        // 计算两个农历日期之间的天数，包括两头
-        function countDaysBetween(maoday, firstDay) {
-            try {
-                // 获取两个日期的公历信息
-                const maodaySolar = maoday.getSolar();
-                const firstDaySolar = firstDay.getSolar();
-                
-                // 构建Date对象
-                const maodayDate = new Date(maodaySolar.getYear(), maodaySolar.getMonth() - 1, maodaySolar.getDay());
-                const firstDayDate = new Date(firstDaySolar.getYear(), firstDaySolar.getMonth() - 1, firstDaySolar.getDay());
-                
-                // 计算日期差（包含两头）
-                const delta = firstDayDate - maodayDate;
-                return Math.floor(delta / (1000 * 60 * 60 * 24)) + 1;
-            } catch (e) {
-                console.log(`计算日期差出错: ${e}`);
-                return 0;
-            }
-        }
-        
-        // 根据用户定义的规则判断干支的阴阳属性
-        function getGanzhiYinyang(ganzhi) {
-            try {
-                if (!ganzhi || ganzhi.length === 0) {
-                    throw new Error("干支不能为空");
-                }
-                
-                // 提取天干（干支第一个字）
-                const gan = ganzhi.charAt(0);
-                const yangGans = ['甲', '己', '丁', '壬', '戊', '癸'];
-                const yinGans = ['乙', '庚', '丙', '辛'];
-                
-                if (yangGans.includes(gan)) {
-                    return '阳';
-                } else if (yinGans.includes(gan)) {
-                    return '阴';
-                } else {
-                    return '未知';
-                }
-            } catch (e) {
-                console.log(`计算干支阴阳属性时出错: ${e}`);
-                return '未知';
-            }
-        }
-        
-        // 计算星势
-        function calculateXingshi(ganzhi) {
-            // 定义七星规则
-            const qixing = {
-                '甲己': '123456789',
-                '乙庚': '765432198',
-                '丙辛': '321987654',
-                '丁壬': '912345678',
-                '戊癸': '567891234'
+            dayStrList.push(`${day}${dayGanZhi}`);
+            cxingzhiriDetail[day] = {
+              gz: dayGanZhi,
+              xingshi: dayXingshi,
+              jieqi: jieqi
             };
-            
-            // 十二地支
-            const dizhi = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
-            
-            try {
-                // 提取日干支的天干
-                if (!ganzhi || ganzhi.length === 0) {
-                    throw new Error("日干支不能为空");
-                }
-                const gan = ganzhi.charAt(0);
-                
-                // 确定属于哪个七星组合
-                let qixingKey = null;
-                if (gan === '甲' || gan === '己') {
-                    qixingKey = '甲己';
-                } else if (gan === '乙' || gan === '庚') {
-                    qixingKey = '乙庚';
-                } else if (gan === '丙' || gan === '辛') {
-                    qixingKey = '丙辛';
-                } else if (gan === '丁' || gan === '壬') {
-                    qixingKey = '丁壬';
-                } else if (gan === '戊' || gan === '癸') {
-                    qixingKey = '戊癸';
-                }
-                
-                if (!qixingKey) {
-                    return null;
-                }
-                
-                // 获取对应的数组并生成星势字典
-                const qixingArray = qixing[qixingKey];
-                const xingshi = {};
-                for (let i = 0; i < dizhi.length; i++) {
-                    const num = qixingArray.charAt(i % qixingArray.length);
-                    if (!xingshi[num]) {
-                        xingshi[num] = [];
-                    }
-                    xingshi[num].push(dizhi[i]);
-                }
-                
-                return xingshi;
-            } catch (e) {
-                console.log(`计算星势出错: ${e}`);
-                return null;
+          } catch (e) {
+            continue;
+          }
+        }
+        cxingzhiri = dayStrList.join(' ');
+      }
+      
+      const czhishi = {};
+      if (czsxNum && Object.keys(cxingzhiriDetail).length) {
+        for (const [dayStr, detail] of Object.entries(cxingzhiriDetail)) {
+          const day = Number(dayStr);
+          if (isNaN(day)) continue;
+          if (detail.xingshi && detail.xingshi[czsxNum]) {
+            czhishi[day] = detail.xingshi[czsxNum].join('');
+          } else {
+            czhishi[day] = '';
+          }
+        }
+      }
+      
+      let yueajs = null;
+      if (whajs && cy >= 1 && cy <= 12) {
+        const monthKey = MONTH_KEYS[cy - 1];
+        yueajs = whajs[monthKey] || null;
+      }
+      
+      let bgLines = [`农历${cn}年${cy}月`];
+      bgLines.push(`${czrx}值日${czsx}值时的时间有：`);
+      
+      if (Object.keys(cxingzhiriDetail).length) {
+        for (const [dayStr, detail] of Object.entries(cxingzhiriDetail)) {
+          const day = Number(dayStr);
+          if (isNaN(day)) continue;
+          const shi = czhishi[day] || '';
+          const jieqiInfo = detail.jieqi ? `【节气：${detail.jieqi}】` : '';
+          bgLines.push(`${day}号${detail.gz}日 ${jieqiInfo} ${czrx}(${czrxNum})值日 ${shi}时${czsx}(${czsxNum})值时`);
+        }
+      }
+      
+      if (shaf) {
+        shaf.wudt && bgLines.push(`戊都天：${shaf.wudt}`);
+        shaf.jidt && bgLines.push(`己都天：${shaf.jidt}`);
+        shaf.dtjs && bgLines.push(`都天夹煞：${shaf.dtjs}`);
+        shaf.lishi && bgLines.push(`力士方：${shaf.lishi}`);
+      }
+      
+      yueajs && bgLines.push(`月暗建煞：${yueajs}`);
+      
+      const bg = bgLines.join('\n');
+      
+      return {
+        cxingzhiri,
+        czhishi: Object.keys(czhishi).length ? czhishi : null,
+        yueajs,
+        shaf: {
+          dtjs: shaf?.dtjs || null,
+          jidt: shaf?.jidt || null,
+          lishi: shaf?.lishi || null,
+          wudt: shaf?.wudt || null
+        },
+        bg
+      };
+    };
+
+    // ========== 3. 主计算函数（适配浏览器） ==========
+    const calculate = async (input) => {
+      try {
+        const now = new Date();
+        if (isNaN(now.getTime())) throw new Error('系统时间无效，无法获取默认年月');
+        const nowSolar = lunar.Solar.fromDate(now);
+        const nowLunar = nowSolar.getLunar();
+        const currentLunarYear = nowLunar.getYear();
+        const currentLunarMonth = nowLunar.getMonth();
+        const isLeapMonth = typeof nowLunar.isLeap === 'function' ? nowLunar.isLeap() : currentLunarMonth < 0;
+        const monthValue = Math.abs(currentLunarMonth);
+        
+        // 处理输入参数
+        const useCnCy = input?.cn !== undefined && input?.cy !== undefined;
+        const nian = useCnCy ? input.cn : (input?.nian ?? currentLunarYear);
+        const yue = useCnCy ? input.cy : (input?.yue ?? monthValue);
+        
+        const lunarMonthNum = getValidNumber(Math.abs(useCnCy ? input.cy : currentLunarMonth));
+        const lunarDayNum = getValidNumber(nowLunar.getDay?.());
+        
+        if (!Number.isInteger(nian) || nian < 1900 || nian > 2100) throw new Error('年份必须是1900-2100之间的整数');
+        if (!Number.isInteger(yue) || yue < 1 || yue > 12) throw new Error('月份必须是1-12之间的整数');
+        
+        const monthForLunar = (input?.yue === undefined && isLeapMonth) ? -yue : yue;
+        const firstDay = (() => {
+          try {
+            return lunar.Lunar.fromYmd(nian, yue, 1, isLeapMonth);
+          } catch {
+            return lunar.Lunar.fromYmd(nian, monthForLunar, 1);
+          }
+        })();
+        
+        const maoDay = findLastMaoDay(firstDay);
+        const [chuyigz, mgz, cd, chuyigzyy, mgzyy] = [
+          firstDay.getDayInGanZhi(),
+          maoDay.getDayInGanZhi(),
+          firstDay.getSolar().subtract(maoDay.getSolar()) + 1,
+          GAN_YIN_YANG[firstDay.getDayInGanZhi()?.[0]] ?? null,
+          GAN_YIN_YANG[maoDay.getDayInGanZhi()?.[0]] ?? null
+        ];
+        
+        const cyxing = calculateCyxing(mgzyy, cd);
+        const lunarMonthObj = lunar.LunarYear.fromYear(nian).getMonth(monthForLunar);
+        const yts = lunarMonthObj ? lunarMonthObj.getDayCount() : null;
+        const xingri = calculateXingri(cyxing, chuyigzyy, yts);
+        const [rz, sz] = [nowLunar.getDayInGanZhi() ?? null, nowLunar.getTimeInGanZhi() ?? null];
+        const { kz, kezhi, kg } = calculateKeGanZhi(nowLunar, now);
+        const correctedTime = getCorrectedTime(now);
+        const laibinT = formatDate(correctedTime);
+        
+        const shijian = {
+          bjs: nowSolar?.toYmd?.() ?? null,
+          nln: getValidNumber(currentLunarYear),
+          nly: getValidNumber(monthValue),
+          yue: lunarMonthNum,
+          ri: lunarDayNum,
+          nz: getYearGanZhiSafe(nowLunar),
+          yz: getMonthGanZhiSafe(nowLunar),
+          rz: rz ?? null,
+          sz: sz ?? null,
+          kz: kz ?? null,
+          kezhi: kezhi ?? null,
+          kg: kg ?? null
+        };
+        
+        const xingshi = calculateXingshi(rz);
+        const xingke = calculateXingke(sz);
+        const jieqi = getJieQi(nowSolar) ?? getJieQi(nowLunar) ?? null;
+        
+        const zhixing = (() => {
+          const ZHIXING_MAP = {1:'水星',2:'太阴',3:'木星',4:'计都',5:'土星',6:'罗睺',7:'金星',8:'太阳',9:'火星'};
+          let zrx = null;
+          if (shijian.ri && xingri) {
+            for (const [num, days] of Object.entries(xingri)) {
+              if (days.includes(shijian.ri)) {
+                zrx = ZHIXING_MAP[Number(num)] ?? null;
+                break;
+              }
             }
+          }
+          let zsx = null;
+          const shiZhi = sz?.[1];
+          if (shiZhi && xingshi) {
+            for (const [num, zhis] of Object.entries(xingshi)) {
+              if (zhis.includes(shiZhi)) {
+                zsx = ZHIXING_MAP[Number(num)] ?? null;
+                break;
+              }
+            }
+          }
+          let zkx = null;
+          const keZhi = kz?.[1];
+          if (keZhi && xingke) {
+            for (const [num, zhis] of Object.entries(xingke)) {
+              if (zhis.includes(keZhi)) {
+                zkx = ZHIXING_MAP[Number(num)] ?? null;
+                break;
+              }
+            }
+          }
+          return (zrx || zsx || zkx) ? { zrx, zsx, zkx } : null;
+        })();
+        
+        const rishen = (() => {
+          const rawZhixing = nowLunar.getZhiXing?.() ?? null;
+          const rawXishen = nowLunar.getDayPositionXi?.() ?? null;
+          const rawFushen = nowLunar.getDayPositionFu?.() ?? null;
+          const rawCaishen = nowLunar.getDayPositionCai?.() ?? null;
+          const rawZhixingxiu = nowLunar.getXiu?.() ?? nowLunar.getXiuZheng?.() ?? nowLunar.getXiuDesc?.() ?? nowLunar.getXiuName?.() ?? null;
+          const zhixing = normalizeZhixing(rawZhixing);
+          const xishen = normalizePosition(rawXishen);
+          const fushen = normalizePosition(rawFushen);
+          const caishen = normalizePosition(rawCaishen);
+          const zhixingxiu = rawZhixingxiu ? String(rawZhixingxiu).trim() : null;
+          const hasValidField = [zhixing, zhixingxiu, xishen, fushen, caishen].some(v => v !== null);
+          return hasValidField ? { zhixing, zhixingxiu, xishen, fushen, caishen } : null;
+        })();
+        
+        const nz = shijian.nz ?? null;
+        const lishi = calculateLishi(nz);
+        const whajs = calculateWhajs(nz);
+        const allGuiren = calculateAllGuiren(nz, nowLunar);
+        const {
+          taijiguiren = null,
+          tianyiguiren = null,
+          guoyinguiren = null,
+          wenchangguiren = null,
+          fuxingguiren = null,
+          tianchuguiren = null,
+          wenquguiren = null,
+          jieduguiren = null,
+        } = allGuiren ?? {};
+        
+        const grss = allGuiren ? {
+          taijiguiren,
+          tianyiguiren,
+          guoyinguiren,
+          wenchangguiren,
+          fuxingguiren,
+          tianchuguiren,
+          wenquguiren,
+          jieduguiren,
+        } : null;
+        
+        const yearGan = nz ? nz[0] : null;
+        const dtGroup = getDtjsGroupByGan(yearGan);
+        const shaf = {
+          wudt: dtGroup ? `戊都天在${dtGroup[0]}方` : null,
+          jidt: dtGroup ? `己都天在${dtGroup[1]}方` : null,
+          dtjs: dtGroup ? `都天夹煞在${dtGroup[2]}` : null,
+          lishi: lishi ?? null,
+        };
+        
+        let chaxun = null;
+        if (input?.czrx && input?.czsx) {
+          chaxun = processChaxun(
+            nian,
+            yue,
+            input.czrx, 
+            input.czsx,
+            xingri,
+            whajs,
+            shaf,
+            currentLunarYear,
+            monthValue,
+            isLeapMonth
+          );
         }
         
-        // 计算力士方位
-        function calculateLishi(nianGanzhi) {
-            try {
-                // 力士方位映射
-                const lishiFangweiMap = {
-                    '子': '艮', '丑': '艮', '寅': '巽', '卯': '巽', '辰': '巽',
-                    '巳': '坤', '午': '坤', '未': '坤', '申': '乾', '酉': '乾',
-                    '戌': '乾', '亥': '艮'
-                };
-                
-                if (nianGanzhi.length < 2) {
-                    throw new Error("年干支格式错误，需包含年干和年支");
-                }
-                const nianZhi = nianGanzhi.charAt(1);
-                
-                if (lishiFangweiMap[nianZhi]) {
-                    return `lishi：${nianZhi}年力士在${lishiFangweiMap[nianZhi]}方`;
-                } else {
-                    return null;
-                }
-            } catch (e) {
-                console.log(`计算力士信息出错: ${e}`);
-                return null;
-            }
-        }
-        
-        // 计算暗建煞
-        function calculateWhajs(nianGanzhi) {
-            try {
-                // 暗建煞规则
-                const anjian1Map = {
-                    '子午卯酉': '坤震巽中乾兑艮离坎坤震巽',
-                    '寅申巳亥': '艮离坎坤震巽中乾兑艮离坎',
-                    '辰戌丑未': '中乾兑艮离坎坤震巽中乾兑'
-                };
-                
-                // 月份信息
-                const yueInfo = {
-                    1: {name: 'yi', chinese: '一月'}, 
-                    2: {name: 'er', chinese: '二月'},
-                    3: {name: 'san', chinese: '三月'}, 
-                    4: {name: 'si', chinese: '四月'},
-                    5: {name: 'wu', chinese: '五月'}, 
-                    6: {name: 'liu', chinese: '六月'},
-                    7: {name: 'qi', chinese: '七月'}, 
-                    8: {name: 'ba', chinese: '八月'},
-                    9: {name: 'jiu', chinese: '九月'}, 
-                    10: {name: 'shi', chinese: '十月'},
-                    11: {name: 'shiyi', chinese: '十一月'}, 
-                    12: {name: 'shier', chinese: '十二月'}
-                };
-                
-                // 提取年支
-                if (nianGanzhi.length < 2) {
-                    throw new Error("年干支格式错误，需包含年干和年支");
-                }
-                const nianZhi = nianGanzhi.charAt(1);
-                
-                // 确定年支组别
-                let group = '';
-                if (['子', '午', '卯', '酉'].includes(nianZhi)) {
-                    group = '子午卯酉';
-                } else if (['寅', '申', '巳', '亥'].includes(nianZhi)) {
-                    group = '寅申巳亥';
-                } else if (['辰', '戌', '丑', '未'].includes(nianZhi)) {
-                    group = '辰戌丑未';
-                } else {
-                    throw new Error(`不支持的年支：${nianZhi}`);
-                }
-                
-                if (!anjian1Map[group]) {
-                    throw new Error(`无对应暗建煞规则的组别：${group}`);
-                }
-                const fangweiStr = anjian1Map[group];
-                
-                // 生成暗建煞字典
-                const anjianShaDict = {};
-                for (let month = 1; month <= 12; month++) {
-                    if (yueInfo[month] && (month - 1) < fangweiStr.length) {
-                        const info = yueInfo[month];
-                        anjianShaDict[info.name] = `${info.chinese}暗建煞在${fangweiStr.charAt(month - 1)}`;
-                    }
-                }
-                
-                return anjianShaDict;
-            } catch (e) {
-                console.log(`计算暗建煞出错: ${e}`);
-                return null;
-            }
-        }
-        
-        // 计算都天夹煞
-        function calculateDtjs(nianGanzhi) {
-            try {
-                // 都天夹煞规则
-                const dtjsRules = {
-                    '甲': ['辰', '巳', '巽'],
-                    '己': ['辰', '巳', '巽'],
-                    '乙': ['子寅', '丑卯', '甲'],
-                    '庚': ['子寅', '丑卯', '甲'],
-                    '丙': ['戌', '亥', '乾'],
-                    '辛': ['戌', '亥', '乾'],
-                    '丁': ['申', '酉', '庚'],
-                    '壬': ['申', '酉', '庚'],
-                    '戊': ['午', '未', '丁'],
-                    '癸': ['午', '未', '丁']
-                };
-                
-                // 提取年干
-                if (nianGanzhi.length < 2) {
-                    throw new Error("年干支格式错误，需包含年干和年支");
-                }
-                const nianGan = nianGanzhi.charAt(0);
-                
-                if (!dtjsRules[nianGan]) {
-                    throw new Error(`不支持的年干：${nianGan}`);
-                }
-                
-                // 获取对应规则
-                const rule = dtjsRules[nianGan];
-                const wudtFang = rule[0];
-                const jidtFang = rule[1];
-                const dtjsFang = rule[2];
-                
-                // 生成结果
-                const wudt = `戊都天在${wudtFang}方`;
-                const jidt = `巳都天在${jidtFang}方`;
-                const dtjs = `都天夹煞在${dtjsFang}`;
-                
-                return {
-                    wudt: wudt,
-                    jidt: jidt,
-                    dtjs: dtjs
-                };
-            } catch (e) {
-                console.log(`计算都天夹煞出错: ${e}`);
-                return null;
-            }
-        }
-        
-        // 处理单个月份，返回该月内匹配的日子
-        function processSingleMonth(year, month, targetStarNum) {
-            try {
-                // 定义当月初一
-                const currentFirstDay = Lunar.fromYmd(year, month, 1);
-                
-                // 计算当月总天数
-                const nextMonth = month === 12 ? 1 : month + 1;
-                const nextYear = month === 12 ? year + 1 : year;
-                const nextFirstDay = Lunar.fromYmd(nextYear, nextMonth, 1);
-                
-                // 转换为公历计算天数差
-                const currentSolar = currentFirstDay.getSolar();
-                const nextSolar = nextFirstDay.getSolar();
-                const currentDate = new Date(currentSolar.getYear(), currentSolar.getMonth() - 1, currentSolar.getDay());
-                const nextDate = new Date(nextSolar.getYear(), nextSolar.getMonth() - 1, nextSolar.getDay());
-                const totalDays = Math.floor((nextDate - currentDate) / (1000 * 60 * 60 * 24));
-                
-                // 初一干支信息
-                const firstDayGanzhi = currentFirstDay.getDayInGanZhi();
-                const firstDayYinyang = getGanzhiYinyang(firstDayGanzhi);
-                
-                // 查找初一前的卯日
-                const maoday = getMaodayBeforeDate(currentFirstDay);
-                if (!maoday) {
-                    return [];
-                }
-                
-                // 计算天数差
-                const days = countDaysBetween(maoday, currentFirstDay);
-                
-                // 选择地支列表
-                const yangDz = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
-                const yinDz = ['子', '亥', '戌', '酉', '申', '未', '午', '巳', '辰', '卯', '寅', '丑'];
-                const selectedDz = firstDayYinyang === '阳' ? yangDz : yinDz;
-                
-                // 获取对应地支值
-                const index = days - 1;
-                if (!(0 <= index && index < selectedDz.length)) {
-                    return [];
-                }
-                
-                const dzValue = selectedDz[index];
-                
-                // 查找星值对应的数字
-                const xingzhi = {1: '子', 2: '未申', 3: '卯', 4: '辰巳', 6: '戌亥', 7: '酉', 8: '丑寅', 9: '午'};
-                let xingzhiNum = null;
-                for (const num in xingzhi) {
-                    if (xingzhi[num].includes(dzValue)) {
-                        xingzhiNum = parseInt(num);
-                        break;
-                    }
-                }
-                
-                if (!xingzhiNum) {
-                    return [];
-                }
-                
-                // 选择九星数组
-                const yangPsz = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-                const yinPsz = [9, 8, 7, 6, 5, 4, 3, 2, 1];
-                const selectedPsz = firstDayYinyang === '阳' ? yangPsz : yinPsz;
-                
-                // 查找起始索引
-                const startIndex = selectedPsz.indexOf(xingzhiNum);
-                if (startIndex === -1) {
-                    return [];
-                }
-                
-                // 生成每日九星映射
-                const dayPszMap = {};
-                for (let day = 1; day <= totalDays; day++) {
-                    const currentIndex = (startIndex + day - 1) % selectedPsz.length;
-                    const pszNum = selectedPsz[currentIndex];
-                    if (!dayPszMap[pszNum]) {
-                        dayPszMap[pszNum] = [];
-                    }
-                    dayPszMap[pszNum].push(day);
-                }
-                
-                // 筛选符合目标星数的日子
-                const matchedDays = [];
-                if (dayPszMap[targetStarNum]) {
-                    for (const day of dayPszMap[targetStarNum]) {
-                        // 创建当日农历对象
-                        const dayLunar = Lunar.fromYmd(year, month, day);
-                        const ganzhi = dayLunar.getDayInGanZhi();
-                        const solar = dayLunar.getSolar();
-                        
-                        // 格式化日期（使用农历日期）
-                        const formattedDate = `${year}年${month}月${day}日（农历）`;
-                        
-                        // 计算相关信息
-                        const nianGanzhi = dayLunar.getYearInGanZhi();
-                        const lishi = calculateLishi(nianGanzhi);
-                        const dtjs = calculateDtjs(nianGanzhi);
-                        const whajsDict = calculateWhajs(nianGanzhi);
-                        
-                        // 获取当前月份的暗建煞
-                        let whajs = "";
-                        const yueOrder = ['yi', 'er', 'san', 'si', 'wu', 'liu', 'qi', 'ba', 'jiu', 'shi', 'shiyi', 'shier'];
-                        if (whajsDict && whajsDict[yueOrder[month - 1]]) {
-                            whajs = whajsDict[yueOrder[month - 1]];
-                        }
-                        
-                        // 添加到结果列表
-                        matchedDays.push({
-                            date: formattedDate,
-                            ganzhi: ganzhi,
-                            star: xingshu[targetStarNum],
-                            lishi: lishi,
-                            dtjs: dtjs,
-                            whajs: whajs
-                        });
-                    }
-                }
-                
-                return matchedDays;
-            } catch (e) {
-                console.log(`分析月信息出错: ${e}`);
-                return [];
-            }
-        }
-        
-        // 分析特定年月及随后两个月的星日信息
-        function analyzeMonthDays(targetYear, targetMonth, targetStarNum) {
-            try {
-                // 处理连续三个月：当前月、下一个月、再下一个月
-                const allMatchedDays = [];
-                
-                // 月份列表：当前月、下一个月、再下一个月
-                for (let monthOffset = 0; monthOffset < 3; monthOffset++) {
-                    // 计算当前处理的月份和年份
-                    let currentProcessMonth = targetMonth + monthOffset;
-                    let currentProcessYear = targetYear;
-                    
-                    // 处理月份进位
-                    while (currentProcessMonth > 12) {
-                        currentProcessMonth -= 12;
-                        currentProcessYear += 1;
-                    }
-                    
-                    // 处理该月份
-                    const monthResult = processSingleMonth(currentProcessYear, currentProcessMonth, targetStarNum);
-                    allMatchedDays.push(...monthResult);
-                }
-                
-                return allMatchedDays;
-            } catch (e) {
-                console.log(`分析月信息出错: ${e}`);
-                return [];
-            }
-        }
-        
-        // 获取当前时间的值日星和值时星
-        function updateCurrentStars() {
-            try {
-                const now = new Date();
-                const solar = Solar.fromYmd(now.getFullYear(), now.getMonth() + 1, now.getDate());
-                const lunar = solar.getLunar();
-                
-                // 定义当月初一
-                const currentFirstDay = Lunar.fromYmd(lunar.getYear(), lunar.getMonth(), 1);
-                
-                // 计算当月总天数
-                const nextMonth = lunar.getMonth() === 12 ? 1 : lunar.getMonth() + 1;
-                const nextYear = lunar.getMonth() === 12 ? lunar.getYear() + 1 : lunar.getYear();
-                const nextFirstDay = Lunar.fromYmd(nextYear, nextMonth, 1);
-                
-                // 转换为公历计算天数差
-                const currentSolar = currentFirstDay.getSolar();
-                const nextSolar = nextFirstDay.getSolar();
-                const currentDate = new Date(currentSolar.getYear(), currentSolar.getMonth() - 1, currentSolar.getDay());
-                const nextDate = new Date(nextSolar.getYear(), nextSolar.getMonth() - 1, nextSolar.getDay());
-                const totalDays = Math.floor((nextDate - currentDate) / (1000 * 60 * 60 * 24));
-                
-                // 初一干支信息
-                const firstDayGanzhi = currentFirstDay.getDayInGanZhi();
-                const firstDayYinyang = getGanzhiYinyang(firstDayGanzhi);
-                
-                // 查找初一前的卯日
-                const maoday = getMaodayBeforeDate(currentFirstDay);
-                if (maoday) {
-                    // 计算天数差
-                    const days = countDaysBetween(maoday, currentFirstDay);
-                    
-                    // 选择地支列表
-                    const yangDz = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
-                    const yinDz = ['子', '亥', '戌', '酉', '申', '未', '午', '巳', '辰', '卯', '寅', '丑'];
-                    const selectedDz = firstDayYinyang === '阳' ? yangDz : yinDz;
-                    
-                    // 获取对应地支值
-                    const index = days - 1;
-                    if (0 <= index && index < selectedDz.length) {
-                        const dzValue = selectedDz[index];
-                        
-                        // 查找星值对应的数字
-                        const xingzhi = {1: '子', 2: '未申', 3: '卯', 4: '辰巳', 6: '戌亥', 7: '酉', 8: '丑寅', 9: '午'};
-                        let xingzhiNum = null;
-                        for (const num in xingzhi) {
-                            if (xingzhi[num].includes(dzValue)) {
-                                xingzhiNum = parseInt(num);
-                                break;
-                            }
-                        }
-                        
-                        if (xingzhiNum) {
-                            // 选择九星数组
-                            const yangPsz = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-                            const yinPsz = [9, 8, 7, 6, 5, 4, 3, 2, 1];
-                            const selectedPsz = firstDayYinyang === '阳' ? yangPsz : yinPsz;
-                            
-                            // 查找起始索引
-                            const startIndex = selectedPsz.indexOf(xingzhiNum);
-                            if (startIndex !== -1) {
-                                // 生成每日九星映射
-                                const dayPszMap = {};
-                                for (let day = 1; day <= totalDays; day++) {
-                                    const currentIndex = (startIndex + day - 1) % selectedPsz.length;
-                                    const pszNum = selectedPsz[currentIndex];
-                                    if (!dayPszMap[pszNum]) {
-                                        dayPszMap[pszNum] = [];
-                                    }
-                                    dayPszMap[pszNum].push(day);
-                                }
-                                
-                                // 获取当前日
-                                const currentDay = lunar.getDay();
-                                
-                                // 计算当前值日星
-                                let zrx = '未知';
-                                for (const pszNum in dayPszMap) {
-                                    if (dayPszMap[pszNum].includes(currentDay)) {
-                                        zrx = xingshu[parseInt(pszNum)];
-                                        break;
-                                    }
-                                }
-                                
-                                // 更新显示
-                                document.getElementById('currentZrx').textContent = zrx;
-                            }
-                        }
-                    }
-                }
-                
-                // 计算当前值时星
-                const timeGanzhi = lunar.getTimeInGanZhi();
-                const dayGanzhi = lunar.getDayInGanZhi();
-                const dayXingshi = calculateXingshi(dayGanzhi);
-                let zsx = '未知';
-                if (dayXingshi) {
-                    const timeZhi = timeGanzhi.charAt(timeGanzhi.length - 1);
-                    for (const num in dayXingshi) {
-                        if (dayXingshi[num].includes(timeZhi)) {
-                            zsx = xingshu[parseInt(num)];
-                            break;
-                        }
-                    }
-                }
-                
-                // 更新显示
-                document.getElementById('currentZsx').textContent = zsx;
-            } catch (e) {
-                console.log(`更新当前星信息出错: ${e}`);
-            }
-        }
-        
-        // 格式化结果显示
-        function formatResult(days) {
-            // 处理days为null或undefined的情况
-            if (!days || days.length === 0) {
-                return '<div class="result-item"><h3>查询结果</h3><div class="result-content">未找到匹配的日期</div></div>';
-            }
-            
-            let html = '';
-            for (const day of days) {
-                // 确保day对象和其中的属性存在
-                const date = day.date || '未知日期';
-                const ganzhi = day.ganzhi || '未知干支';
-                const star = day.star || '未知值日星';
-                const lishi = day.lishi || '';
-                
-                // 处理都天信息
-                let dtjsHtml = '';
-                if (day.dtjs) {
-                    const wudt = day.dtjs.wudt || '';
-                    const jidt = day.dtjs.jidt || '';
-                    const dtjs = day.dtjs.dtjs || '';
-                    dtjsHtml = `<div class="result-line">都天信息</div>
-                        <div class="result-line">${wudt}</div>
-                        <div class="result-line">${jidt}</div>
-                        <div class="result-line">${dtjs}</div>`;
-                }
-                
-                // 处理暗建煞
-                const whajs = day.whajs || '';
-                
-                html += `<div class="result-item">
-                    <h3>${date}</h3>
-                    <div class="result-content">
-                        <div class="result-line">干支：${ganzhi}</div>
-                        <div class="result-line">值日星：${star}</div>
-                        ${lishi ? `<div class="result-line">${lishi}</div>` : ''}
-                        ${dtjsHtml}
-                        ${whajs ? `<div class="result-line">暗建煞</div>
-                        <div class="result-line">${whajs}</div>` : ''}
-                    </div>
-                </div>`;
-            }
-            
-            return html;
-        }
-        
-        // 查询按钮点击事件
-        function handleQuery() {
-            try {
-                // 用户输入的年份和月份直接作为农历年月使用
-                const lunarYear = parseInt(document.getElementById('yearSelect').value);
-                const lunarMonth = parseInt(document.getElementById('monthSelect').value);
-                const starName = document.getElementById('starSelect').value;
-                const starNum = xingshuReverse[starName];
-                
-                if (!starNum) {
-                    throw new Error('无效的值星选择');
-                }
-                
-                // 分析月份天数（直接使用农历年月）
-                const matchedDays = analyzeMonthDays(lunarYear, lunarMonth, starNum);
-                
-                // 格式化结果
-                const resultHtml = formatResult(matchedDays);
-                
-                // 显示结果
-                document.getElementById('result').innerHTML = resultHtml;
-            } catch (e) {
-                console.error('查询出错:', e);
-                document.getElementById('result').innerHTML = `<div style="color: red; text-align: center; padding: 20px;">查询出错：${e.message || '未知错误'}，请稍后重试</div>`;
-            }
-        }
-        
-            // 初始化下拉框
-            initSelects();
-            
-            // 更新当前星信息
-            updateCurrentStars();
-            
-            // 绑定查询按钮事件
-            document.getElementById('queryBtn').addEventListener('click', function() {
-                try {
-                    handleQuery();
-                } catch (e) {
-                    console.error('查询出错:', e);
-                    document.getElementById('result').innerHTML = '<div style="color: red; text-align: center; padding: 20px;">查询出错，请稍后重试</div>';
-                }
-            });
-            
-            // 初始查询
-            try {
-                handleQuery();
-            } catch (e) {
-                console.error('初始查询出错:', e);
-                document.getElementById('result').innerHTML = '<div style="color: red; text-align: center; padding: 20px;">查询出错，请稍后重试</div>';
-            }
-        });
-    </script>
+        return { 
+          message: "计算成功", 
+          chuyigz: chuyigz ?? null,
+          mgz: mgz ?? null,
+          cd: typeof cd === 'number' ? cd : (cd ? Number(cd) : null),
+          chuyigzyy: chuyigzyy ?? null,
+          mgzyy: mgzyy ?? null,
+          cyxing: cyxing ?? null,
+          yts: typeof yts === 'number' ? yts : (yts ? Number(yts) : null),
+          xingri: xingri,
+          xingshi: xingshi ?? null,
+          xingke: xingke ?? null,
+          jieqi: jieqi ?? null,
+          whajs: whajs ?? null,
+          grss,
+          rishen,
+          zhixing,
+          shaf,
+          shijian,
+          laibinT: laibinT ?? null,
+          chaxun
+        };
+      } catch (error) {
+        const msg = error?.message || '未知错误';
+        return { 
+          message: `计算失败: ${msg}`, 
+          chuyigz: null, mgz: null, cd: null, chuyigzyy: null, mgzyy: null,
+          cyxing: null, yts: null, xingri: null,
+          xingshi: null,
+          xingke: null,
+          jieqi: null,
+          whajs: null,
+          grss: null,
+          rishen: null,
+          zhixing: null,
+          shaf: null,
+          shijian: null,
+          laibinT: null,
+          chaxun: null
+        };
+      }
+    };
+
+    // ========== 4. 页面交互逻辑 ==========
+    document.getElementById('calculateBtn').addEventListener('click', async () => {
+      const resultEl = document.getElementById('result');
+      resultEl.textContent = '正在计算，请稍候...';
+      
+      // 获取输入值
+      const nian = document.getElementById('nian').value ? Number(document.getElementById('nian').value) : undefined;
+      const yue = document.getElementById('yue').value ? Number(document.getElementById('yue').value) : undefined;
+      const czrx = document.getElementById('czrx').value;
+      const czsx = document.getElementById('czsx').value;
+      
+      // 执行计算
+      const result = await calculate({ nian, yue, czrx, czsx });
+      
+      // 展示结果（格式化JSON）
+      resultEl.textContent = JSON.stringify(result, null, 2);
+    });
+  </script>
 </body>
 </html>
