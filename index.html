@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>天地玄妙</title>
-    <!-- 引入lunar-javascript库 -->
-    <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.1/lunar.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -91,13 +89,6 @@
             min-width: 80px;
         }
         
-        .input-group label {
-            display: block;
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 5px;
-        }
-        
         select, button {
             padding: 8px;
             border: 1px solid #ddd;
@@ -179,11 +170,11 @@
             <div class="xing-info">
                 <div class="xing-item">
                     <div class="xing-label">值日星</div>
-                    <div class="xing-value" id="currentZrx">火星</div>
+                    <div class="xing-value" id="currentZrx">太阳</div>
                 </div>
                 <div class="xing-item">
                     <div class="xing-label">值时星</div>
-                    <div class="xing-value" id="currentZsx">罗睺</div>
+                    <div class="xing-value" id="currentZsx">太阴</div>
                 </div>
             </div>
         </div>
@@ -191,54 +182,27 @@
         <div class="input-section">
             <div class="input-row">
                 <div class="input-group">
-                    <select id="yearSelect">
-                        <!-- 年份选项将通过JavaScript动态生成 -->
-                    </select>
+                    <select id="yearSelect"></select>
                 </div>
                 <div class="input-group">
-                    <select id="monthSelect">
-                        <!-- 月份选项将通过JavaScript动态生成 -->
-                    </select>
+                    <select id="monthSelect"></select>
                 </div>
                 <div class="input-group">
-                    <select id="starSelect">
-                        <!-- 值星选项将通过JavaScript动态生成 -->
-                    </select>
-                </div>
-                <div class="input-group">
-                    <button id="queryBtn">查询</button>
+                    <select id="starSelect"></select>
                 </div>
             </div>
+            <button id="queryBtn">查询</button>
         </div>
         
         <div class="result-section">
             <div id="result"></div>
         </div>
     </div>
+
+    <!-- 引入lunar-javascript库 -->
+    <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.1/lunar.min.js"></script>
     
     <script>
-        // 修复lunar-javascript库的全局对象引用
-        let Solar, Lunar;
-        // 等待文档加载完成后初始化
-        window.addEventListener('DOMContentLoaded', function() {
-            // 确保lunar-javascript库正确加载
-            if (typeof window.lunar !== 'undefined') {
-                if (typeof window.lunar.Solar !== 'undefined') {
-                    Solar = window.lunar.Solar;
-                    Lunar = window.lunar.Lunar;
-                } else if (typeof window.lunar.fromYmd !== 'undefined') {
-                    // 处理不同版本的库结构
-                    Lunar = window.lunar;
-                    Solar = window.solar || window.Solar;
-                }
-            } else if (typeof window.Solar !== 'undefined') {
-                Solar = window.Solar;
-                Lunar = window.Lunar;
-            } else {
-                console.error('lunar-javascript库未正确加载');
-                return;
-            }
-        
         // 星数映射
         const xingshu = {
             1: '水星', 2: '太阴', 3: '木星', 4: '计都', 5: '土星',
@@ -250,6 +214,8 @@
             '水星': 1, '太阴': 2, '木星': 3, '计都': 4, '土星': 5,
             '罗睺': 6, '金星': 7, '太阳': 8, '火星': 9
         };
+        
+        let Solar, Lunar;
         
         // 初始化年、月、值星下拉框
         function initSelects() {
@@ -278,14 +244,13 @@
                 const option = document.createElement('option');
                 option.value = month;
                 option.textContent = `月${month}`;
-                if (month === new Date().getMonth() + 1) {
+                if (month === 1) {
                     option.selected = true;
                 }
                 monthSelect.appendChild(option);
             }
             
-            // 清空并重新添加值星选项
-            starSelect.innerHTML = '';
+            // 添加值星选项
             // 选项格式：值日XX
             const starOptions = ['水星', '太阴', '木星', '计都', '土星', '罗睺', '金星', '太阳', '火星'];
             for (const star of starOptions) {
@@ -665,7 +630,6 @@
                         // 创建当日农历对象
                         const dayLunar = Lunar.fromYmd(year, month, day);
                         const ganzhi = dayLunar.getDayInGanZhi();
-                        const solar = dayLunar.getSolar();
                         
                         // 格式化日期（使用农历日期）
                         const formattedDate = `${year}年${month}月${day}日（农历）`;
@@ -848,7 +812,7 @@
         // 格式化结果显示
         function formatResult(days) {
             if (days.length === 0) {
-                return '<div class="result-item"><h3>查询结果</h3><div class="result-content">未找到匹配的日期</div></div>';
+                return '<div style="color: #666; text-align: center; padding: 20px;">未找到匹配的日期</div>';
             }
             
             let html = '';
@@ -891,10 +855,31 @@
                 document.getElementById('result').innerHTML = resultHtml;
             } catch (e) {
                 console.error('查询出错:', e);
-                alert('查询出错: ' + e.message);
+                document.getElementById('result').innerHTML = '<div style="color: red; text-align: center; padding: 20px;">查询出错，请稍后重试</div>';
             }
         }
         
+        // 页面加载完成后初始化
+        window.addEventListener('load', function() {
+            // 确保lunar-javascript库正确加载
+            if (typeof window.lunar !== 'undefined') {
+                if (typeof window.lunar.Solar !== 'undefined') {
+                    Solar = window.lunar.Solar;
+                    Lunar = window.lunar.Lunar;
+                } else if (typeof window.lunar.fromYmd !== 'undefined') {
+                    // 处理不同版本的库结构
+                    Lunar = window.lunar;
+                    Solar = window.solar || window.Solar;
+                }
+            } else if (typeof window.Solar !== 'undefined') {
+                Solar = window.Solar;
+                Lunar = window.Lunar;
+            } else {
+                console.error('lunar-javascript库未正确加载');
+                document.getElementById('result').innerHTML = '<div style="color: red; text-align: center; padding: 20px;">依赖库加载失败</div>';
+                return;
+            }
+            
             // 初始化下拉框
             initSelects();
             
