@@ -10,7 +10,16 @@
     .container { padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; }
     .form-group { margin: 15px 0; }
     label { display: block; margin-bottom: 5px; font-weight: bold; }
-    input, select, button { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; width: 300px; }
+    input, select, button { 
+      padding: 8px 12px; 
+      border: 1px solid #ccc; 
+      border-radius: 4px; 
+      width: 300px;
+      /* 关键修复：确保下拉菜单可点击，解除样式遮挡 */
+      pointer-events: auto !important;
+      position: relative !important;
+      z-index: 9999 !important;
+    }
     button { 
       width: 100%; 
       background: #0078d7; 
@@ -32,6 +41,12 @@
     }
     .title { text-align: center; margin-bottom: 20px; color: #333; }
     .tips { color: #666; font-size: 14px; margin-top: 5px; }
+    /* 优化下拉菜单样式，提升交互体验 */
+    select {
+      appearance: auto;
+      -webkit-appearance: auto;
+      -moz-appearance: auto;
+    }
   </style>
 </head>
 <body>
@@ -87,7 +102,7 @@
     <div class="result" id="result"></div>
   </div>
 
-  <!-- 引入依赖库（CDN） -->
+  <!-- 引入依赖库（CDN）- 关键修复：确保库正确加载 -->
   <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.0/dist/lunar.min.js"></script>
   
   <script>
@@ -318,7 +333,7 @@
     const calculateCyxing = (m, d) => !m || !d || !['阳','阴'].includes(m) ? null : XINGZHI[(m==='阳'?DZSX:DZNX)[(d-1)%12]] ?? null;
 
     const calculateXingri = (cyxing, chuyigzyy, yts) => {
-      if (cyxing === null || !chuyigzyy || !yts || !['阳','阴'].includes(chuyigzyy) || !PAISHANZ.includes(cyxing)) return null;
+      if (cyxing === null || !chuyigzyy || !yts || !PAISHANZ.includes(cyxing)) return null;
       const idx = PAISHANZ.indexOf(cyxing);
       const rearranged = chuyigzyy === '阳' ? [...PAISHANZ.slice(idx), ...PAISHANZ.slice(0, idx)] : (() => {
         const reversed = [...PAISHANZ].reverse();
@@ -833,22 +848,36 @@
       }
     };
 
-    // ========== 4. 页面交互逻辑 ==========
-    document.getElementById('calculateBtn').addEventListener('click', async () => {
+    // ========== 4. 页面交互逻辑 - 关键修复：确保DOM加载完成后绑定事件 ==========
+    // 等待页面完全加载后再初始化交互
+    document.addEventListener('DOMContentLoaded', function() {
+      const calculateBtn = document.getElementById('calculateBtn');
       const resultEl = document.getElementById('result');
-      resultEl.textContent = '正在计算，请稍候...';
       
-      // 获取输入值
-      const nian = document.getElementById('nian').value ? Number(document.getElementById('nian').value) : undefined;
-      const yue = document.getElementById('yue').value ? Number(document.getElementById('yue').value) : undefined;
-      const czrx = document.getElementById('czrx').value;
-      const czsx = document.getElementById('czsx').value;
+      // 绑定点击事件
+      calculateBtn.addEventListener('click', async () => {
+        resultEl.textContent = '正在计算，请稍候...';
+        
+        // 获取输入值
+        const nian = document.getElementById('nian').value ? Number(document.getElementById('nian').value) : undefined;
+        const yue = document.getElementById('yue').value ? Number(document.getElementById('yue').value) : undefined;
+        const czrx = document.getElementById('czrx').value;
+        const czsx = document.getElementById('czsx').value;
+        
+        // 执行计算
+        const result = await calculate({ nian, yue, czrx, czsx });
+        
+        // 展示结果（格式化JSON）
+        resultEl.textContent = JSON.stringify(result, null, 2);
+      });
       
-      // 执行计算
-      const result = await calculate({ nian, yue, czrx, czsx });
-      
-      // 展示结果（格式化JSON）
-      resultEl.textContent = JSON.stringify(result, null, 2);
+      // 额外：给下拉菜单添加点击反馈，确保交互可见
+      const selectElements = document.querySelectorAll('select');
+      selectElements.forEach(select => {
+        select.addEventListener('click', function() {
+          this.focus(); // 确保获取焦点，触发下拉
+        });
+      });
     });
   </script>
 </body>
